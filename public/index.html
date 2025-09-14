@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>Restoran Menyusi</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>🍴 Menyu</h1>
+  <div id="menu"></div>
+
+  <script>
+    async function loadMenu() {
+      let res = await fetch("/api/menu");
+      let data = await res.json();
+      let menu = document.getElementById("menu");
+      menu.innerHTML = "";
+      data.forEach(food => {
+        let isNew = (new Date() - new Date(food.createdAt)) < 86400000;
+        menu.innerHTML += `
+          <div class="item">
+            <img src="/uploads/${food.image}" width="200">
+            <h3>${food.name} ${isNew ? "<span class='new'>NEW</span>" : ""}</h3>
+            <p>${food.description}</p>
+            <b>${food.price} so'm</b>
+          </div>
+        `;
+      });
+    }
+    loadMenu();
+  </script>
+</body>
+</html>
