@@ -2,32 +2,159 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8">
-  <title>Restoran Menyusi</title>
+  <title>Chashmai Nur — Menyu</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .layout {
+      display: flex;
+    }
+    .sidebar {
+      width: 220px;
+      background: #111;
+      color: #fff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .sidebar .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .sidebar .logo img {
+      width: 80px;
+      border-radius: 50%;
+    }
+    .sidebar h2 {
+      font-size: 18px;
+      margin-top: 10px;
+      color: gold;
+    }
+    .menu-nav button {
+      display: block;
+      width: 100%;
+      margin: 5px 0;
+      padding: 10px;
+      background: #222;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+    }
+    .menu-nav button:hover {
+      background: gold;
+      color: #111;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      position: relative;
+    }
+    header h1 {
+      margin: 0;
+      color: #222;
+    }
+    .contact-info {
+      font-size: 14px;
+      color: #fff; /* oq rang */
+      background: #111;
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+    .contact-info a {
+      color: #fff; /* oq rang */
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .contact-info a:hover {
+      text-decoration: underline;
+    }
+
+    /* O'ng pastki burchakdagi manzil */
+    .map-fixed {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 220px;
+      height: 120px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      background: #fff;
+      z-index: 1000;
+    }
+    .map-fixed iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  </style>
 </head>
 <body>
-  <h1>🍴 Menyu</h1>
-  <div id="menu"></div>
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="Chashmai-nur.jpg" alt="Chashmai Nur" />
+        <h2>Chashmai Nur</h2>
+      </div>
+      <nav class="menu-nav">
+        <button data-cat="salat">🥗 Salatlar</button>
+        <button data-cat="asosiy">🍲 Asosiy taomlar</button>
+        <button data-cat="gosht">🍖 Go‘shtli taomlar</button>
+        <button data-cat="baliq">🐟 Baliq</button>
+        <button data-cat="shashlik">🍢 Shashliklar</button>
+        <button data-cat="desert">🍰 Desertlar</button>
+        <button data-cat="ichimlik">☕ Ichimliklar</button>
+      </nav>
+    </aside>
 
-  <script>
-    async function loadMenu() {
-      let res = await fetch("/api/menu");
-      let data = await res.json();
-      let menu = document.getElementById("menu");
-      menu.innerHTML = "";
-      data.forEach(food => {
-        let isNew = (new Date() - new Date(food.createdAt)) < 86400000;
-        menu.innerHTML += `
-          <div class="item">
-            <img src="/uploads/${food.image}" width="200">
-            <h3>${food.name} ${isNew ? "<span class='new'>NEW</span>" : ""}</h3>
-            <p>${food.description}</p>
-            <b>${food.price} so'm</b>
-          </div>
-        `;
-      });
-    }
-    loadMenu();
-  </script>
+    <!-- Content -->
+    <main class="content">
+      <header>
+        <h1>Menyu</h1>
+        <div class="contact-info">
+          📞 <a href="tel:+998974128074">+998 97 412 80 74</a>
+        </div>
+      </header>
+
+      <div id="menuGrid" class="grid"></div>
+    </main>
+  </div>
+
+  <!-- O'ng pastki burchakdagi Google Map -->
+  <div class="map-fixed">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2988.926377362461!2d69.5779242!3d41.484195799999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38aee32fb8529605%3A0xcdafc0eac05563a7!2z0KfQsNGI0LzQsNC4LdCd0YPRgA!5e0!3m2!1sru!2s!4v1757863212626!5m2!1sru!2s"
+      allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel" class="admin hidden">
+    <h2>Admin Panel</h2>
+    <form id="addFoodForm">
+      <input type="text" id="foodName" placeholder="Taom nomi" required />
+      <input type="text" id="foodDesc" placeholder="Qisqa tavsif" required />
+      <input type="number" id="foodPrice" placeholder="Narx" required />
+      <input type="file" id="foodImage" accept="image/*" required />
+      <select id="foodCategory" required>
+        <option value="salat">Salatlar</option>
+        <option value="asosiy">Asosiy taomlar</option>
+        <option value="gosht">Go‘shtli taomlar</option>
+        <option value="baliq">Baliq</option>
+        <option value="shashlik">Shashliklar</option>
+        <option value="desert">Desertlar</option>
+        <option value="ichimlik">Ichimliklar</option>
+      </select>
+      <button type="submit">➕ Qo‘shish</button>
+    </form>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
+
